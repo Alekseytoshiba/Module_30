@@ -1,0 +1,54 @@
+stages:
+  - lint
+  - test
+  - security
+
+variables:
+  PYTHON_VERSION: "3.12"
+
+# Кэширование зависимостей
+cache:
+  paths:
+    - .cache/pip
+    - venv/
+
+before_script:
+  - python --version
+  - pip install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+  - pip install -r requirements.txt
+
+black:
+  stage: lint
+  script:
+    - black --check --diff app/ run.py
+
+flake8:
+  stage: lint
+  script:
+    - flake8 app/ run.py
+
+mypy:
+  stage: lint
+  script:
+    - mypy app/ run.py
+
+pytest:
+  stage: test
+  script:
+    - pytest tests/
+
+bandit:
+  stage: security
+  script:
+    - pip install bandit
+    - bandit -r app/
+
+safety:
+  stage: security
+  script:
+    - pip install safety
+    - safety check
+    -
+
