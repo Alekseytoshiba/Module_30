@@ -1,25 +1,9 @@
-import os
-
-
 class Config:
     """
-    Класс для хранения настроек приложения.
+    Класс для хранения конфигурационных настроек приложения.
+    """
+    # URI для подключения к базе данных SQLite
+    SQLALCHEMY_DATABASE_URI: str = 'sqlite:///parking.db'
 
-    Атрибуты:
-        SQLALCHEMY_DATABASE_URI (str): URI для подключения к базе данных.
-        SQLALCHEMY_TRACK_MODIFICATIONS (bool): Отслеживание изменений в моделях.
-    """
-    SQLALCHEMY_DATABASE_URI: str = os.getenv('DATABASE_URL', 'sqlite:///site.db')
-    """
-    Строка подключения к базе данных.
-    По умолчанию использует SQLite базу данных `site.db`, если переменная окружения `DATABASE_URL` не установлена.
-    """
-
+    # Выключение отслеживания изменений в базе данных для улучшения производительности
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
-    """
-    Опция отслеживания модификаций для SQLAlchemy.
-    Устанавливается в False для повышения производительности.
-    """
-
-
-

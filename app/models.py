@@ -1,121 +1,103 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import relationship
 from datetime import datetime
-
-db = SQLAlchemy()
-
+from . import db
 
 class Client(db.Model):
     """
-    Модель клиента парковки.
+    Модель для представления клиента.
 
     Атрибуты:
         id (int): Уникальный идентификатор клиента.
         name (str): Имя клиента.
         surname (str): Фамилия клиента.
-        credit_card (Optional[str]): Номер кредитной карты клиента.
-        car_number (Optional[str]): Номер автомобиля клиента.
+        card_number (str): Номер карты клиента (необязательно).
+
+    Методы:
+        to_dict(): Возвращает словарь с информацией о клиенте.
     """
-    __tablename__ = 'client'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    """Уникальный идентификатор клиента."""
-
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    """Имя клиента."""
-
     surname = db.Column(db.String(50), nullable=False)
-    """Фамилия клиента."""
+    card_number = db.Column(db.String(20))
 
-    credit_card = db.Column(db.String(50))
-    """Номер кредитной карты клиента."""
+    def to_dict(self) -> dict:
+        """
+        Преобразование объекта клиента в словарь.
 
-    car_number = db.Column(db.String(10))
-    """Номер автомобиля клиента."""
-
-    def __repr__(self) -> str:
-        return f'<Client {self.name} {self.surname}>'
+        :return: Словарь с информацией о клиенте.
+        """
+        return {
+            'id': self.id,
+            'name': self.name,
+            'surname': self.surname,
+            'card_number': self.card_number
+        }
 
 
 class Parking(db.Model):
     """
-    Модель парковки.
+    Модель для представления парковки.
 
     Атрибуты:
         id (int): Уникальный идентификатор парковки.
-        address (str): Адрес парковки.
-        opened (bool): Признак открытости парковки.
-        count_places (int): Общее количество парковочных мест.
-        count_available_places (int): Количество свободных парковочных мест.
+        name (str): Название парковки.
+        total_spaces (int): Общее количество мест на парковке.
+        free_spaces (int): Количество свободных мест на парковке.
+        is_open (bool): Флаг, указывающий, открыта ли парковка (по умолчанию True).
+
+    Методы:
+        to_dict(): Возвращает словарь с информацией о парковке.
     """
-    __tablename__ = 'parking'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    total_spaces = db.Column(db.Integer, nullable=False)
+    free_spaces = db.Column(db.Integer, nullable=False)
+    is_open = db.Column(db.Boolean, default=True)
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    """Уникальный идентификатор парковки."""
+    def to_dict(self) -> dict:
+        """
+        Преобразование объекта парковки в словарь.
 
-    address = db.Column(db.String(100), nullable=False)
-    """Адрес парковки."""
-
-    opened = db.Column(db.Boolean)
-    """Признак открытости парковки."""
-
-    count_places = db.Column(db.Integer, nullable=False)
-    """Общее количество парковочных мест."""
-
-    count_available_places = db.Column(db.Integer, nullable=False)
-    """Количество свободных парковочных мест."""
-
-    def __repr__(self) -> str:
-        return f'<Parking {self.address}, available places: {self.count_available_places}>'
+        :return: Словарь с информацией о парковке.
+        """
+        return {
+            'id': self.id,
+            'name': self.name,
+            'total_spaces': self.total_spaces,
+            'free_spaces': self.free_spaces,
+            'is_open': self.is_open
+        }
 
 
 class ClientParking(db.Model):
     """
-    Модель связи между клиентом и парковкой.
+    Модель для представления парковки клиента.
 
     Атрибуты:
-        id (int): Уникальный идентификатор записи.
+        id (int): Уникальный идентификатор парковки клиента.
         client_id (int): Идентификатор клиента.
         parking_id (int): Идентификатор парковки.
-        time_in (datetime): Время въезда на парковку.
-        time_out (Optional[datetime]): Время выезда с парковки.
+        entry_time (datetime): Время въезда клиента на парковку.
+        exit_time (datetime): Время выезда клиента с парковки (необязательно).
+
+    Методы:
+        to_dict(): Возвращает словарь с информацией о парковке клиента.
     """
-    __tablename__ = 'client_parking'
+    id = db.Column(db.Integer, primary_key=True)
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
+    parking_id = db.Column(db.Integer, db.ForeignKey('parking.id'))
+    entry_time = db.Column(db.DateTime, default=datetime.utcnow)
+    exit_time = db.Column(db.DateTime)
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    """Уникальный идентификатор записи."""
+    def to_dict(self) -> dict:
+        """
+        Преобразование объекта парковки клиента в словарь.
 
-    client_id = db.Column(
-        db.Integer,
-        db.ForeignKey('client.id'),
-        nullable=False
-    )
-    """Идентификатор клиента."""
-
-    parking_id = db.Column(
-        db.Integer,
-        db.ForeignKey('parking.id'),
-        nullable=False
-    )
-    """Идентификатор парковки."""
-
-    time_in = db.Column(db.DateTime, default=datetime.utcnow)
-    """Время въезда на парковку."""
-
-    time_out = db.Column(db.DateTime)
-    """Время выезда с парковки."""
-
-    # Связи с моделями
-    client = relationship("Client")
-    parking = relationship("Parking")
-
-    # Уникальное ограничение
-    __table_args__ = (
-        db.UniqueConstraint('client_id', 'parking_id', name='unique_client_parking'),
-    )
-
-    def __repr__(self) -> str:
-        return f'<ClientParking client={self.client_id}, parking={self.parking_id}, time_in={self.time_in}, time_out={self.time_out}>'
-
-
-
+        :return: Словарь с информацией о парковке клиента.
+        """
+        return {
+            'id': self.id,
+            'client_id': self.client_id,
+            'parking_id': self.parking_id,
+            'entry_time': self.entry_time.isoformat(),
+            'exit_time': self.exit_time.isoformat() if self.exit_time else None
+        }
