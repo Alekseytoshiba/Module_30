@@ -4,7 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 from ..factories import ClientFactory, ParkingFactory
 from .config import Config
 
-# Инициализация объекта SQLAlchemy для работы с базой данных
 db = SQLAlchemy()
 
 

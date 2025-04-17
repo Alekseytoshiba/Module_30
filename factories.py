@@ -37,7 +37,9 @@ class ClientFactory(SQLAlchemyModelFactory):
     surname = factory.Faker("last_name")  # Генерация фамилии
     # Карта может быть или не быть (50/50)
     card_number = factory.LazyAttribute(
-        lambda x: fake.credit_card_number() if random.choice([True, False]) else None
+        lambda x: fake.credit_card_number()
+        if random.choice([True, False])
+        else None
     )
 
 
@@ -68,4 +70,6 @@ class ParkingFactory(SQLAlchemyModelFactory):
     is_open = factory.Faker("boolean")  # Открыта или закрыта
     total_spaces = factory.Faker("random_int", min=10, max=1000)  # Всего мест
     # Свободные места (не больше общего количества)
-    free_spaces = factory.LazyAttribute(lambda o: random.randint(0, o.total_spaces))
+    free_spaces = factory.LazyAttribute(
+        lambda o: random.randint(0, o.total_spaces)
+    )
