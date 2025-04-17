@@ -1,5 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+
+from ..factories import ClientFactory, ParkingFactory
 from .config import Config
 
 # Инициализация объекта SQLAlchemy для работы с базой данных
@@ -30,11 +32,6 @@ def factories() -> dict:
 
     :return: Словарь фабрик для моделей 'Client' и 'Parking'.
     """
-    # Импорт фабрик для моделей Client и Parking
-    from module_29_testing.hw.Задание_4.factories import ClientFactory, ParkingFactory
 
     # Возвращение словаря с фабриками
-    return {
-        'Client': ClientFactory,
-        'Parking': ParkingFactory
-    }
+    return {"Client": ClientFactory, "Parking": ParkingFactory}

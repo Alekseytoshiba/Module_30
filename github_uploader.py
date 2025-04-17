@@ -1,16 +1,18 @@
 import os
 import sys
+
 from git import Repo
 from github import Github
 
 
 def get_github_token():
     """Безопасный ввод токена GitHub с проверкой"""
-    if 'GITHUB_TOKEN' in os.environ:
-        return os.environ['GITHUB_TOKEN']
+    if "GITHUB_TOKEN" in os.environ:
+        return os.environ["GITHUB_TOKEN"]
 
     try:
         import getpass
+
         token = getpass.getpass("Введите GitHub токен: ")
         if not token:
             raise ValueError("Токен не может быть пустым")
@@ -20,10 +22,12 @@ def get_github_token():
         sys.exit(1)
 
 
-def upload_to_github(repo_path, github_token, repo_name, commit_message="Initial commit"):
+def upload_to_github(
+    repo_path, github_token, repo_name, commit_message="Initial commit"
+):
     try:
         # Инициализация репозитория
-        if not os.path.exists(os.path.join(repo_path, '.git')):
+        if not os.path.exists(os.path.join(repo_path, ".git")):
             repo = Repo.init(repo_path)
             print(f"Инициализирован новый репозиторий в {repo_path}")
         else:
@@ -48,8 +52,8 @@ def upload_to_github(repo_path, github_token, repo_name, commit_message="Initial
             print(f"Репозиторий {repo_name} уже существует")
         except Exception:
             # Создание нового репозитория
-            if '/' in repo_name:
-                username, repo_name = repo_name.split('/')
+            if "/" in repo_name:
+                username, repo_name = repo_name.split("/")
                 user = g.get_user(username)
                 remote_repo = user.create_repo(repo_name, private=False)
             else:
@@ -57,12 +61,14 @@ def upload_to_github(repo_path, github_token, repo_name, commit_message="Initial
             print(f"Создан новый репозиторий: {repo_name}")
 
         # Настройка origin и отправка
-        if 'origin' not in [remote.name for remote in repo.remotes]:
-            origin = repo.create_remote('origin', f"https://{github_token}@github.com/{repo_name}.git")
+        if "origin" not in [remote.name for remote in repo.remotes]:
+            origin = repo.create_remote(
+                "origin", f"https://{github_token}@github.com/{repo_name}.git"
+            )
         else:
             origin = repo.remotes.origin
 
-        origin.push('HEAD:main', force=True)
+        origin.push("HEAD:main", force=True)
         print("✅ Код успешно отправлен на GitHub!")
 
     except Exception as e:
@@ -74,7 +80,10 @@ if __name__ == "__main__":
     # Настройки
     PROJECT_PATH = os.getcwd()
     REPO_NAME = input("Введите название репозитория (формат: username/repo): ").strip()
-    COMMIT_MESSAGE = input("Введите сообщение коммита [по умолчанию: 'Обновление кода']: ").strip() or "Обновление кода"
+    COMMIT_MESSAGE = (
+        input("Введите сообщение коммита [по умолчанию: 'Обновление кода']: ").strip()
+        or "Обновление кода"
+    )
 
     # Получение токена
     GITHUB_TOKEN = get_github_token()

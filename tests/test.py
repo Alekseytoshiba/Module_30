@@ -1,7 +1,9 @@
 import pytest
+from factory.alchemy import SQLAlchemyModelFactory
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from factory.alchemy import SQLAlchemyModelFactory
+
+from ..app import db
 
 db = SQLAlchemy()
 
@@ -26,9 +28,9 @@ class ClientFactory(SQLAlchemyModelFactory):
 @pytest.fixture
 def app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['TESTING'] = True
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["TESTING"] = True
 
     db.init_app(app)
 

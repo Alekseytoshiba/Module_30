@@ -1,10 +1,11 @@
+import random
+
 import factory
 from factory.alchemy import SQLAlchemyModelFactory
 from faker import Faker
-import random
 
-from module_29_testing.hw.Задание_4.app import db
-from module_29_testing.hw.Задание_4.app.models import Client, Parking
+from .app import db
+from .app.models import Client, Parking
 
 # Инициализация Faker для генерации фейковых данных
 fake = Faker()
@@ -28,13 +29,16 @@ class ClientFactory(SQLAlchemyModelFactory):
             model (Client): Модель, для которой создается фабрика.
             sqlalchemy_session (Session): Сессия SQLAlchemy для работы с базой данных.
         """
+
         model = Client
         sqlalchemy_session = db.session  # Используем сессию SQLAlchemy
 
-    name = factory.Faker('first_name')  # Генерация имени
-    surname = factory.Faker('last_name')  # Генерация фамилии
+    name = factory.Faker("first_name")  # Генерация имени
+    surname = factory.Faker("last_name")  # Генерация фамилии
     # Карта может быть или не быть (50/50)
-    card_number = factory.LazyAttribute(lambda x: fake.credit_card_number() if random.choice([True, False]) else None)
+    card_number = factory.LazyAttribute(
+        lambda x: fake.credit_card_number() if random.choice([True, False]) else None
+    )
 
 
 class ParkingFactory(SQLAlchemyModelFactory):
@@ -56,11 +60,12 @@ class ParkingFactory(SQLAlchemyModelFactory):
             model (Parking): Модель, для которой создается фабрика.
             sqlalchemy_session (Session): Сессия SQLAlchemy для работы с базой данных.
         """
+
         model = Parking
         sqlalchemy_session = db.session
 
-    name = factory.Faker('street_address')  # Адрес как название парковки
-    is_open = factory.Faker('boolean')  # Открыта или закрыта
-    total_spaces = factory.Faker('random_int', min=10, max=1000)  # Всего мест
+    name = factory.Faker("street_address")  # Адрес как название парковки
+    is_open = factory.Faker("boolean")  # Открыта или закрыта
+    total_spaces = factory.Faker("random_int", min=10, max=1000)  # Всего мест
     # Свободные места (не больше общего количества)
     free_spaces = factory.LazyAttribute(lambda o: random.randint(0, o.total_spaces))
