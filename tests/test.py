@@ -1,11 +1,8 @@
 import pytest
 from factory.alchemy import SQLAlchemyModelFactory
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 
 from ..app import db
-
-db = SQLAlchemy()
 
 
 class Client(db.Model):

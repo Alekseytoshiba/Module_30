@@ -31,7 +31,9 @@ def park_car() -> Union[Tuple[dict, int], Tuple[Response, int]]:
 
     parking.free_spaces -= 1
     client_parking = ClientParking(
-        client_id=client.id, parking_id=parking.id, entry_time=datetime.utcnow()
+        client_id=client.id,
+        parking_id=parking.id,
+        entry_time=datetime.utcnow(),
     )
 
     db.session.add(client_parking)

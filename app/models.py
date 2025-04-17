@@ -106,5 +106,7 @@ class ClientParking(db.Model):
             "client_id": self.client_id,
             "parking_id": self.parking_id,
             "entry_time": self.entry_time.isoformat(),
-            "exit_time": self.exit_time.isoformat() if self.exit_time else None,
+            "exit_time": self.exit_time.isoformat()
+            if self.exit_time
+            else None,
         }

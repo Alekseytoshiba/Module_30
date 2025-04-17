@@ -1,7 +1,6 @@
 from typing import Tuple, Union
 
-from flask import (Blueprint, Response, jsonify,  # Исправленный импорт request
-                   request)
+from flask import Blueprint, Response, jsonify, request
 
 from app import db
 
@@ -35,7 +34,8 @@ def get_client(client_id: int) -> Union[Response, Tuple[Response, int]]:
 def create_client() -> Union[Response, Tuple[dict, int], Tuple[Response, int]]:
     """
     Создание нового клиента.
-    :return: JSON-объект с информацией о созданном клиенте или сообщение об ошибке.
+    :return: JSON-объект с информацией о созданном клиенте или
+    сообщение об ошибке.
     """
     data = request.get_json()  # Теперь используется правильный request
 
@@ -43,7 +43,9 @@ def create_client() -> Union[Response, Tuple[dict, int], Tuple[Response, int]]:
         return {"error": "Name and surname are required"}, 400
 
     client = Client(
-        name=data["name"], surname=data["surname"], card_number=data.get("card_number")
+        name=data["name"],
+        surname=data["surname"],
+        card_number=data.get("card_number"),
     )
 
     db.session.add(client)

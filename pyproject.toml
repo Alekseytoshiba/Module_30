@@ -1,0 +1,11 @@
+[tool.black]
+line-length = 79
+skip-string-normalization = true
+
+[tool.flake8]
+max-line-length = 79
+ignore = ["E203"]
+
+[tool.mypy]
+python_executable = "python3"
+namespace_packages = true
